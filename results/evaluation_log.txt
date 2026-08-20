@@ -1,0 +1,86 @@
+Loading data...
+  train: (125973, 43), test: (22544, 43)
+Fitting preprocessor on training split only...
+
+=== binary ===
+  train class counts:
+attack_type
+normal    67343
+attack    58630
+  selecting k via stratified CV on the training split...
+    k=  1  acc=0.9966  f1_macro=0.9965  f1_weighted=0.9966
+    k=  3  acc=0.9958  f1_macro=0.9958  f1_weighted=0.9958
+    k=  5  acc=0.9953  f1_macro=0.9953  f1_weighted=0.9953
+    k=  7  acc=0.9947  f1_macro=0.9946  f1_weighted=0.9947
+    k= 11  acc=0.9935  f1_macro=0.9934  f1_weighted=0.9935
+    k= 15  acc=0.9930  f1_macro=0.9930  f1_weighted=0.9930
+    k= 21  acc=0.9923  f1_macro=0.9922  f1_weighted=0.9923
+  CV took 152.3s
+  best k = 1 (by CV macro-F1 = 0.9965)
+  held-out KDDTest+ : accuracy=0.7924  f1_macro=0.7919  f1_weighted=0.7905  (majority-class baseline accuracy=0.4308)
+
+=== category5 ===
+  train class counts:
+attack_type
+normal    67343
+dos       45927
+probe     11656
+r2l         995
+u2r          52
+  selecting k via stratified CV on the training split...
+    k=  1  acc=0.9965  f1_macro=0.8785  f1_weighted=0.9965
+    k=  3  acc=0.9955  f1_macro=0.8670  f1_weighted=0.9955
+    k=  5  acc=0.9951  f1_macro=0.8719  f1_weighted=0.9951
+    k=  7  acc=0.9944  f1_macro=0.8730  f1_weighted=0.9944
+    k= 11  acc=0.9935  f1_macro=0.8657  f1_weighted=0.9934
+    k= 15  acc=0.9928  f1_macro=0.8622  f1_weighted=0.9927
+    k= 21  acc=0.9921  f1_macro=0.8537  f1_weighted=0.9920
+  CV took 158.4s
+  best k = 1 (by CV macro-F1 = 0.8785)
+  held-out KDDTest+ : accuracy=0.7698  f1_macro=0.5428  f1_weighted=0.7283  (majority-class baseline accuracy=0.4308)
+
+=== multiclass ===
+  train class counts:
+attack_type
+normal             67343
+neptune            41214
+satan               3633
+ipsweep             3599
+portsweep           2931
+smurf               2646
+nmap                1493
+back                 956
+teardrop             892
+warezclient          890
+pod                  201
+guess_passwd          53
+buffer_overflow       30
+warezmaster           20
+land                  18
+imap                  11
+rootkit               10
+loadmodule             9
+ftp_write              8
+multihop               7
+phf                    4
+perl                   3
+spy                    2
+  selecting k via stratified CV on the training split...
+    k=  1  acc=0.9946  f1_macro=0.7520  f1_weighted=0.9946
+    k=  3  acc=0.9936  f1_macro=0.6649  f1_weighted=0.9935
+    k=  5  acc=0.9930  f1_macro=0.6290  f1_weighted=0.9928
+    k=  7  acc=0.9922  f1_macro=0.6244  f1_weighted=0.9920
+    k= 11  acc=0.9912  f1_macro=0.5959  f1_weighted=0.9910
+    k= 15  acc=0.9907  f1_macro=0.5808  f1_weighted=0.9904
+    k= 21  acc=0.9895  f1_macro=0.5296  f1_weighted=0.9891
+  CV took 107.3s
+  best k = 1 (by CV macro-F1 = 0.7520)
+  held-out KDDTest+ : accuracy=0.7013  f1_macro=0.3341  f1_weighted=0.6116  (majority-class baseline accuracy=0.4308)
+
+=== Summary (held-out KDDTest+) ===
+granularity  best_k  accuracy  majority_class_baseline_accuracy  precision_weighted  recall_weighted  f1_weighted  precision_macro  recall_macro  f1_macro
+     binary       1  0.792406                          0.430758            0.847614         0.792406     0.790474         0.827269      0.814877  0.791898
+  category5       1  0.769784                          0.430758            0.798753         0.769784     0.728284         0.689588      0.542639  0.542833
+ multiclass       1  0.701295                          0.430758            0.582153         0.701295     0.611617         0.342877      0.430951  0.334095
+
+Total runtime: 438.1s
