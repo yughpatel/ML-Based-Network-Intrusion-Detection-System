@@ -2,6 +2,7 @@ import time
 
 import numpy as np
 import pandas as pd
+from imblearn.over_sampling import SMOTE
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import StratifiedKFold
 from sklearn.neighbors import KNeighborsClassifier
@@ -20,31 +21,67 @@ from src.targets import TARGET_BUILDERS
 
 MAX_CV_FOLDS = 5
 
+# Cap on how far a rare class gets oversampled: min(count * SMOTE_GROWTH_CAP,
+# SMOTE_TARGET_CEILING). A class this rare (52 U2R rows) can't responsibly be
+# grown all the way up to "normal"'s size -- almost every neighbor SMOTE
+# would interpolate between is itself synthetic by that point, so the model
+# just overfits to noise instead of learning real structure.
+SMOTE_GROWTH_CAP = 20
+SMOTE_TARGET_CEILING = 2000
+
+
+def apply_smote(X, y, log=print):
+    """Oversample rare classes only (see cap above), one class at a time so
+    each gets its own k_neighbors sized to its actual count -- a single
+    imblearn SMOTE call applies one k_neighbors to every targeted class,
+    which breaks classes as small as U2R's 52 rows. Classes with fewer than
+    2 rows can't be SMOTE'd (there's nothing to interpolate between) and are
+    left untouched."""
+    X = np.asarray(X)
+    y = np.asarray(y)
+    counts = pd.Series(y).value_counts()
+    for cls, count in counts.items():
+        target = min(count * SMOTE_GROWTH_CAP, SMOTE_TARGET_CEILING)
+        if count >= target or count < 2:
+            continue
+        k_neighbors = min(5, count - 1)
+        sm = SMOTE(sampling_strategy={cls: target}, k_neighbors=k_neighbors, random_state=RANDOM_STATE)
+        X, y = sm.fit_resample(X, y)
+        log(f"    SMOTE: {cls} {count} -> {target} (k_neighbors={k_neighbors})")
+    return X, y
+
+
 # Each model is a (param -> estimator) factory plus the grid of param dicts to
 # try via CV. Random forest uses class_weight="balanced" so rare classes
 # (R2L, U2R) contribute as much to the split criterion as "normal"/"dos" do,
 # instead of being swamped -- KNN has no such knob, which is why it misses
-# almost all R2L/U2R on category5/multiclass (see per-class reports).
+# almost all R2L/U2R on category5/multiclass (see per-class reports). The
+# "_smote" variants reuse the same factory/grid but oversample rare classes
+# in the training data first (see apply_smote / run_granularity).
+_KNN = {
+    "factory": lambda n_neighbors: KNeighborsClassifier(n_neighbors=n_neighbors, n_jobs=-1),
+    "param_grid": [{"n_neighbors": k} for k in [1, 3, 5, 7, 11, 15, 21]],
+}
+_RANDOM_FOREST = {
+    "factory": lambda n_estimators, max_depth: RandomForestClassifier(
+        n_estimators=n_estimators,
+        max_depth=max_depth,
+        class_weight="balanced",
+        random_state=RANDOM_STATE,
+        n_jobs=-1,
+    ),
+    "param_grid": [
+        {"n_estimators": 200, "max_depth": None},
+        {"n_estimators": 200, "max_depth": 20},
+        {"n_estimators": 300, "max_depth": None},
+        {"n_estimators": 500, "max_depth": None},
+    ],
+}
 MODEL_REGISTRY = {
-    "knn": {
-        "factory": lambda n_neighbors: KNeighborsClassifier(n_neighbors=n_neighbors, n_jobs=-1),
-        "param_grid": [{"n_neighbors": k} for k in [1, 3, 5, 7, 11, 15, 21]],
-    },
-    "random_forest": {
-        "factory": lambda n_estimators, max_depth: RandomForestClassifier(
-            n_estimators=n_estimators,
-            max_depth=max_depth,
-            class_weight="balanced",
-            random_state=RANDOM_STATE,
-            n_jobs=-1,
-        ),
-        "param_grid": [
-            {"n_estimators": 200, "max_depth": None},
-            {"n_estimators": 200, "max_depth": 20},
-            {"n_estimators": 300, "max_depth": None},
-            {"n_estimators": 500, "max_depth": None},
-        ],
-    },
+    "knn": {**_KNN, "smote": False},
+    "knn_smote": {**_KNN, "smote": True},
+    "random_forest": {**_RANDOM_FOREST, "smote": False},
+    "random_forest_smote": {**_RANDOM_FOREST, "smote": True},
 }
 
 
@@ -56,6 +93,7 @@ def _cv_folds_for(y) -> int:
 def select_hyperparams_via_cv(model_key: str, X, y, log=print) -> pd.DataFrame:
     factory = MODEL_REGISTRY[model_key]["factory"]
     param_grid = MODEL_REGISTRY[model_key]["param_grid"]
+    use_smote = MODEL_REGISTRY[model_key]["smote"]
     n_splits = _cv_folds_for(y)
     skf = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=RANDOM_STATE)
     X = np.asarray(X)
@@ -65,8 +103,14 @@ def select_hyperparams_via_cv(model_key: str, X, y, log=print) -> pd.DataFrame:
     for params in param_grid:
         fold_metrics = []
         for train_idx, val_idx in skf.split(X, y):
+            # SMOTE is fit on the training fold only -- the validation fold
+            # must stay untouched real data, or its score would be inflated
+            # by synthetic points leaking distributional info from itself.
+            X_fit, y_fit = (X[train_idx], y[train_idx])
+            if use_smote:
+                X_fit, y_fit = apply_smote(X_fit, y_fit, log=lambda *_: None)
             model = factory(**params)
-            model.fit(X[train_idx], y[train_idx])
+            model.fit(X_fit, y_fit)
             pred = model.predict(X[val_idx])
             fold_metrics.append(summary_metrics(y[val_idx], pred))
         mean_metrics = pd.DataFrame(fold_metrics).mean().to_dict()
@@ -101,8 +145,13 @@ def run_granularity(name: str, model_key: str, train_df: pd.DataFrame, test_df: 
                    for p, v in best_params.items()}
     log(f"  best params = {best_params} (by CV macro-F1 = {best_row['f1_macro']:.4f})")
 
+    X_fit, y_fit = (X_train, y_train)
+    if MODEL_REGISTRY[model_key]["smote"]:
+        log("  applying SMOTE to the full training split before the final fit...")
+        X_fit, y_fit = apply_smote(np.asarray(X_train), np.asarray(y_train), log=log)
+
     model = MODEL_REGISTRY[model_key]["factory"](**best_params)
-    model.fit(X_train, y_train)
+    model.fit(X_fit, y_fit)
     y_pred = model.predict(X_test)
 
     test_metrics = summary_metrics(y_test, y_pred)
@@ -133,7 +182,7 @@ def run_granularity(name: str, model_key: str, train_df: pd.DataFrame, test_df: 
     }
 
 
-def run_all(log=print, model_keys=("knn", "random_forest")) -> dict:
+def run_all(log=print, model_keys=("knn", "random_forest", "knn_smote", "random_forest_smote")) -> dict:
     log("Loading data...")
     train_df = load_train()
     test_df = load_test()
