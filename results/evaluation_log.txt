@@ -15,7 +15,7 @@ attack    58630
     n_neighbors=11                acc=0.9935  f1_macro=0.9934  f1_weighted=0.9935
     n_neighbors=15                acc=0.9930  f1_macro=0.9930  f1_weighted=0.9930
     n_neighbors=21                acc=0.9923  f1_macro=0.9922  f1_weighted=0.9923
-  CV took 57.4s
+  CV took 100.0s
   best params = {'n_neighbors': 1} (by CV macro-F1 = 0.9965)
   held-out KDDTest+ : accuracy=0.7924  f1_macro=0.7919  f1_weighted=0.7905  (majority-class baseline accuracy=0.4308)
 
@@ -29,8 +29,41 @@ attack    58630
     n_estimators=200, max_depth=20  acc=0.9980  f1_macro=0.9980  f1_weighted=0.9980
     n_estimators=300, max_depth=None  acc=0.9982  f1_macro=0.9982  f1_weighted=0.9982
     n_estimators=500, max_depth=None  acc=0.9982  f1_macro=0.9982  f1_weighted=0.9982
-  CV took 13892.2s
+  CV took 103.8s
   best params = {'n_estimators': 500, 'max_depth': None} (by CV macro-F1 = 0.9982)
+  held-out KDDTest+ : accuracy=0.7743  f1_macro=0.7734  f1_weighted=0.7714  (majority-class baseline accuracy=0.4308)
+
+=== binary / knn_smote ===
+  train class counts:
+attack_type
+normal    67343
+attack    58630
+  selecting hyperparams via stratified CV on the training split...
+    n_neighbors=1                 acc=0.9966  f1_macro=0.9965  f1_weighted=0.9966
+    n_neighbors=3                 acc=0.9958  f1_macro=0.9958  f1_weighted=0.9958
+    n_neighbors=5                 acc=0.9953  f1_macro=0.9953  f1_weighted=0.9953
+    n_neighbors=7                 acc=0.9947  f1_macro=0.9946  f1_weighted=0.9947
+    n_neighbors=11                acc=0.9935  f1_macro=0.9934  f1_weighted=0.9935
+    n_neighbors=15                acc=0.9930  f1_macro=0.9930  f1_weighted=0.9930
+    n_neighbors=21                acc=0.9923  f1_macro=0.9922  f1_weighted=0.9923
+  CV took 99.3s
+  best params = {'n_neighbors': 1} (by CV macro-F1 = 0.9965)
+  applying SMOTE to the full training split before the final fit...
+  held-out KDDTest+ : accuracy=0.7924  f1_macro=0.7919  f1_weighted=0.7905  (majority-class baseline accuracy=0.4308)
+
+=== binary / random_forest_smote ===
+  train class counts:
+attack_type
+normal    67343
+attack    58630
+  selecting hyperparams via stratified CV on the training split...
+    n_estimators=200, max_depth=None  acc=0.9982  f1_macro=0.9981  f1_weighted=0.9982
+    n_estimators=200, max_depth=20  acc=0.9980  f1_macro=0.9980  f1_weighted=0.9980
+    n_estimators=300, max_depth=None  acc=0.9982  f1_macro=0.9982  f1_weighted=0.9982
+    n_estimators=500, max_depth=None  acc=0.9982  f1_macro=0.9982  f1_weighted=0.9982
+  CV took 102.9s
+  best params = {'n_estimators': 500, 'max_depth': None} (by CV macro-F1 = 0.9982)
+  applying SMOTE to the full training split before the final fit...
   held-out KDDTest+ : accuracy=0.7743  f1_macro=0.7734  f1_weighted=0.7714  (majority-class baseline accuracy=0.4308)
 
 === category5 / knn ===
@@ -49,7 +82,7 @@ u2r          52
     n_neighbors=11                acc=0.9935  f1_macro=0.8657  f1_weighted=0.9934
     n_neighbors=15                acc=0.9928  f1_macro=0.8622  f1_weighted=0.9927
     n_neighbors=21                acc=0.9921  f1_macro=0.8537  f1_weighted=0.9920
-  CV took 100.0s
+  CV took 104.9s
   best params = {'n_neighbors': 1} (by CV macro-F1 = 0.8785)
   held-out KDDTest+ : accuracy=0.7698  f1_macro=0.5428  f1_weighted=0.7283  (majority-class baseline accuracy=0.4308)
 
@@ -66,9 +99,52 @@ u2r          52
     n_estimators=200, max_depth=20  acc=0.9979  f1_macro=0.9268  f1_weighted=0.9979
     n_estimators=300, max_depth=None  acc=0.9980  f1_macro=0.9324  f1_weighted=0.9980
     n_estimators=500, max_depth=None  acc=0.9980  f1_macro=0.9309  f1_weighted=0.9980
-  CV took 140.1s
+  CV took 87.4s
   best params = {'n_estimators': 200, 'max_depth': None} (by CV macro-F1 = 0.9327)
   held-out KDDTest+ : accuracy=0.7500  f1_macro=0.5095  f1_weighted=0.7042  (majority-class baseline accuracy=0.4308)
+
+=== category5 / knn_smote ===
+  train class counts:
+attack_type
+normal    67343
+dos       45927
+probe     11656
+r2l         995
+u2r          52
+  selecting hyperparams via stratified CV on the training split...
+    n_neighbors=1                 acc=0.9965  f1_macro=0.8774  f1_weighted=0.9965
+    n_neighbors=3                 acc=0.9953  f1_macro=0.8799  f1_weighted=0.9954
+    n_neighbors=5                 acc=0.9947  f1_macro=0.8720  f1_weighted=0.9949
+    n_neighbors=7                 acc=0.9939  f1_macro=0.8632  f1_weighted=0.9941
+    n_neighbors=11                acc=0.9929  f1_macro=0.8532  f1_weighted=0.9931
+    n_neighbors=15                acc=0.9922  f1_macro=0.8512  f1_weighted=0.9924
+    n_neighbors=21                acc=0.9914  f1_macro=0.8381  f1_weighted=0.9916
+  CV took 110.5s
+  best params = {'n_neighbors': 3} (by CV macro-F1 = 0.8799)
+  applying SMOTE to the full training split before the final fit...
+    SMOTE: r2l 995 -> 2000 (k_neighbors=5)
+    SMOTE: u2r 52 -> 1040 (k_neighbors=5)
+  held-out KDDTest+ : accuracy=0.7694  f1_macro=0.5672  f1_weighted=0.7270  (majority-class baseline accuracy=0.4308)
+
+=== category5 / random_forest_smote ===
+  train class counts:
+attack_type
+normal    67343
+dos       45927
+probe     11656
+r2l         995
+u2r          52
+  selecting hyperparams via stratified CV on the training split...
+    n_estimators=200, max_depth=None  acc=0.9980  f1_macro=0.9300  f1_weighted=0.9980
+    n_estimators=200, max_depth=20  acc=0.9979  f1_macro=0.9295  f1_weighted=0.9979
+    n_estimators=300, max_depth=None  acc=0.9980  f1_macro=0.9284  f1_weighted=0.9980
+    n_estimators=500, max_depth=None  acc=0.9980  f1_macro=0.9297  f1_weighted=0.9980
+  CV took 60.1s
+  best params = {'n_estimators': 200, 'max_depth': None} (by CV macro-F1 = 0.9300)
+  applying SMOTE to the full training split before the final fit...
+    SMOTE: r2l 995 -> 2000 (k_neighbors=5)
+    SMOTE: u2r 52 -> 1040 (k_neighbors=5)
+  held-out KDDTest+ : accuracy=0.7459  f1_macro=0.5371  f1_weighted=0.7035  (majority-class baseline accuracy=0.4308)
 
 === multiclass / knn ===
   train class counts:
@@ -104,7 +180,7 @@ spy                    2
     n_neighbors=11                acc=0.9912  f1_macro=0.5959  f1_weighted=0.9910
     n_neighbors=15                acc=0.9907  f1_macro=0.5808  f1_weighted=0.9904
     n_neighbors=21                acc=0.9895  f1_macro=0.5296  f1_weighted=0.9891
-  CV took 55.4s
+  CV took 57.0s
   best params = {'n_neighbors': 1} (by CV macro-F1 = 0.7520)
   held-out KDDTest+ : accuracy=0.7013  f1_macro=0.3341  f1_weighted=0.6116  (majority-class baseline accuracy=0.4308)
 
@@ -139,17 +215,91 @@ spy                    2
     n_estimators=200, max_depth=20  acc=0.9950  f1_macro=0.7652  f1_weighted=0.9951
     n_estimators=300, max_depth=None  acc=0.9960  f1_macro=0.7703  f1_weighted=0.9960
     n_estimators=500, max_depth=None  acc=0.9960  f1_macro=0.7709  f1_weighted=0.9960
-  CV took 26.8s
+  CV took 31.9s
   best params = {'n_estimators': 500, 'max_depth': None} (by CV macro-F1 = 0.7709)
   held-out KDDTest+ : accuracy=0.7201  f1_macro=0.4174  f1_weighted=0.6178  (majority-class baseline accuracy=0.4308)
 
-=== Summary (held-out KDDTest+) ===
-granularity         model                              best_params  accuracy  majority_class_baseline_accuracy  precision_weighted  recall_weighted  f1_weighted  precision_macro  recall_macro  f1_macro
-     binary           knn                       {'n_neighbors': 1}  0.792406                          0.430758            0.847614         0.792406     0.790474         0.827269      0.814877  0.791898
-     binary random_forest {'n_estimators': 500, 'max_depth': None}  0.774264                          0.430758            0.835226         0.774264     0.771433         0.814196      0.798190  0.773386
-  category5           knn                       {'n_neighbors': 1}  0.769784                          0.430758            0.798753         0.769784     0.728284         0.689588      0.542639  0.542833
-  category5 random_forest {'n_estimators': 200, 'max_depth': None}  0.749956                          0.430758            0.806202         0.749956     0.704198         0.765398      0.498428  0.509492
- multiclass           knn                       {'n_neighbors': 1}  0.701295                          0.430758            0.582153         0.701295     0.611617         0.342877      0.430951  0.334095
- multiclass random_forest {'n_estimators': 500, 'max_depth': None}  0.720103                          0.430758            0.573810         0.720103     0.617835         0.411317      0.516882  0.417389
+=== multiclass / knn_smote ===
+  train class counts:
+attack_type
+normal             67343
+neptune            41214
+satan               3633
+ipsweep             3599
+portsweep           2931
+smurf               2646
+nmap                1493
+back                 956
+teardrop             892
+warezclient          890
+pod                  201
+guess_passwd          53
+buffer_overflow       30
+warezmaster           20
+land                  18
+imap                  11
+rootkit               10
+loadmodule             9
+ftp_write              8
+multihop               7
+phf                    4
+perl                   3
+spy                    2
+  selecting hyperparams via stratified CV on the training split...
+    n_neighbors=1                 acc=0.9943  f1_macro=0.7319  f1_weighted=0.9943
+    n_neighbors=3                 acc=0.9931  f1_macro=0.7089  f1_weighted=0.9932
+    n_neighbors=5                 acc=0.9923  f1_macro=0.7021  f1_weighted=0.9926
+    n_neighbors=7                 acc=0.9914  f1_macro=0.6875  f1_weighted=0.9918
+    n_neighbors=11                acc=0.9900  f1_macro=0.6586  f1_weighted=0.9905
+    n_neighbors=15                acc=0.9885  f1_macro=0.6480  f1_weighted=0.9892
+    n_neighbors=21                acc=0.9868  f1_macro=0.6399  f1_weighted=0.9877
+  CV took 92.4s
+  best params = {'n_neighbors': 1} (by CV macro-F1 = 0.7319)
+  applying SMOTE to the full training split before the final fit...
+    SMOTE: nmap 1493 -> 2000 (k_neighbors=5)
+    SMOTE: back 956 -> 2000 (k_neighbors=5)
+    SMOTE: teardrop 892 -> 2000 (k_neighbors=5)
+    SMOTE: warezclient 890 -> 2000 (k_neighbors=5)
+    SMOTE: pod 201 -> 2000 (k_neighbors=5)
+    SMOTE: guess_passwd 53 -> 1060 (k_neighbors=5)
+    SMOTE: buffer_overflow 30 -> 600 (k_neighbors=5)
+    SMOTE: warezmaster 20 -> 400 (k_neighbors=5)
+    SMOTE: land 18 -> 360 (k_neighbors=5)
+    SMOTE: imap 11 -> 220 (k_neighbors=5)
+    SMOTE: rootkit 10 -> 200 (k_neighbors=5)
+    SMOTE: loadmodule 9 -> 180 (k_neighbors=5)
+    SMOTE: ftp_write 8 -> 160 (k_neighbors=5)
+    SMOTE: multihop 7 -> 140 (k_neighbors=5)
+    SMOTE: phf 4 -> 80 (k_neighbors=3)
+    SMOTE: perl 3 -> 60 (k_neighbors=2)
+    SMOTE: spy 2 -> 40 (k_neighbors=1)
+  held-out KDDTest+ : accuracy=0.7014  f1_macro=0.3351  f1_weighted=0.6120  (majority-class baseline accuracy=0.4308)
 
-Total runtime: 14303.5s
+=== multiclass / random_forest_smote ===
+  train class counts:
+attack_type
+normal             67343
+neptune            41214
+satan               3633
+ipsweep             3599
+portsweep           2931
+smurf               2646
+nmap                1493
+back                 956
+teardrop             892
+warezclient          890
+pod                  201
+guess_passwd          53
+buffer_overflow       30
+warezmaster           20
+land                  18
+imap                  11
+rootkit               10
+loadmodule             9
+ftp_write              8
+multihop               7
+phf                    4
+perl                   3
+spy                    2
+  selecting hyperparams via stratified CV on the training split...
+    n_estimators=200, max_depth=None  acc=0.9961  f1_macro=0.7643  f1_weighted=0.9961
