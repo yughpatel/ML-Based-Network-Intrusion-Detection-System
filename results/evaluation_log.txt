@@ -303,3 +303,27 @@ perl                   3
 spy                    2
   selecting hyperparams via stratified CV on the training split...
     n_estimators=200, max_depth=None  acc=0.9961  f1_macro=0.7643  f1_weighted=0.9961
+    n_estimators=200, max_depth=20  acc=0.9951  f1_macro=0.7559  f1_weighted=0.9952
+    n_estimators=300, max_depth=None  acc=0.9961  f1_macro=0.7629  f1_weighted=0.9962
+    n_estimators=500, max_depth=None  acc=0.9962  f1_macro=0.7557  f1_weighted=0.9962
+  CV took 46.7s
+  best params = {'n_estimators': 200, 'max_depth': None} (by CV macro-F1 = 0.7643)
+  applying SMOTE to the full training split before the final fit...
+    SMOTE: nmap 1493 -> 2000 (k_neighbors=5)
+    SMOTE: back 956 -> 2000 (k_neighbors=5)
+    SMOTE: teardrop 892 -> 2000 (k_neighbors=5)
+    SMOTE: warezclient 890 -> 2000 (k_neighbors=5)
+    SMOTE: pod 201 -> 2000 (k_neighbors=5)
+    SMOTE: guess_passwd 53 -> 1060 (k_neighbors=5)
+    SMOTE: buffer_overflow 30 -> 600 (k_neighbors=5)
+    SMOTE: warezmaster 20 -> 400 (k_neighbors=5)
+    SMOTE: land 18 -> 360 (k_neighbors=5)
+    SMOTE: imap 11 -> 220 (k_neighbors=5)
+    SMOTE: rootkit 10 -> 200 (k_neighbors=5)
+    SMOTE: loadmodule 9 -> 180 (k_neighbors=5)
+    SMOTE: ftp_write 8 -> 160 (k_neighbors=5)
+    SMOTE: multihop 7 -> 140 (k_neighbors=5)
+    SMOTE: phf 4 -> 80 (k_neighbors=3)
+    SMOTE: perl 3 -> 60 (k_neighbors=2)
+    SMOTE: spy 2 -> 40 (k_neighbors=1)
+  held-out KDDTest+ : accuracy=0.7216  f1_macro=0.4221  f1_weighted=0.6203  (majority-class baseline accuracy=0.4308)
