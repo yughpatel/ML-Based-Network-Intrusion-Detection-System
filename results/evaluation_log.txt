@@ -327,3 +327,20 @@ spy                    2
     SMOTE: perl 3 -> 60 (k_neighbors=2)
     SMOTE: spy 2 -> 40 (k_neighbors=1)
   held-out KDDTest+ : accuracy=0.7216  f1_macro=0.4221  f1_weighted=0.6203  (majority-class baseline accuracy=0.4308)
+
+=== Summary (held-out KDDTest+) ===
+granularity               model                              best_params  accuracy  majority_class_baseline_accuracy  precision_weighted  recall_weighted  f1_weighted  precision_macro  recall_macro  f1_macro
+     binary                 knn                       {'n_neighbors': 1}  0.792406                          0.430758            0.847614         0.792406     0.790474         0.827269      0.814877  0.791898
+     binary       random_forest {'n_estimators': 500, 'max_depth': None}  0.774264                          0.430758            0.835226         0.774264     0.771433         0.814196      0.798190  0.773386
+     binary           knn_smote                       {'n_neighbors': 1}  0.792406                          0.430758            0.847614         0.792406     0.790474         0.827269      0.814877  0.791898
+     binary random_forest_smote {'n_estimators': 500, 'max_depth': None}  0.774264                          0.430758            0.835226         0.774264     0.771433         0.814196      0.798190  0.773386
+  category5                 knn                       {'n_neighbors': 1}  0.769784                          0.430758            0.798753         0.769784     0.728284         0.689588      0.542639  0.542833
+  category5       random_forest {'n_estimators': 200, 'max_depth': None}  0.749956                          0.430758            0.806202         0.749956     0.704198         0.765398      0.498428  0.509492
+  category5           knn_smote                       {'n_neighbors': 3}  0.769384                          0.430758            0.813632         0.769384     0.726991         0.731362      0.578858  0.567181
+  category5 random_forest_smote {'n_estimators': 200, 'max_depth': None}  0.745875                          0.430758            0.807316         0.745875     0.703532         0.785370      0.516659  0.537116
+ multiclass                 knn                       {'n_neighbors': 1}  0.701295                          0.430758            0.582153         0.701295     0.611617         0.342877      0.430951  0.334095
+ multiclass       random_forest {'n_estimators': 500, 'max_depth': None}  0.720103                          0.430758            0.573810         0.720103     0.617835         0.411317      0.516882  0.417389
+ multiclass           knn_smote                       {'n_neighbors': 1}  0.701384                          0.430758            0.582361         0.701384     0.611988         0.343451      0.431119  0.335118
+ multiclass random_forest_smote {'n_estimators': 200, 'max_depth': None}  0.721567                          0.430758            0.579339         0.721567     0.620322         0.418834      0.518418  0.422064
+
+Total runtime: 1155.2s
