@@ -1,12 +1,13 @@
 # NetGuard
 
-NetGuard is a machine learning model that classifies network traffic as **Normal** or **Attack**, built as a university coursework project. It uses a K-Nearest Neighbors (KNN) algorithm trained on the NSL-KDD dataset.
+NetGuard is a machine learning pipeline that classifies network traffic on the NSL-KDD dataset, built as a university coursework project. It compares K-Nearest Neighbors and class-weighted Random Forest across three label granularities (binary normal/attack, 5-category attack type, and full multiclass), with and without SMOTE oversampling for rare attack classes.
 
 ## How it works
 
 - Each network connection record is described by features like duration, protocol type, and byte count.
-- A KNN classifier compares new traffic records against the training set and labels them Normal or Attack based on the closest matching records.
-- The goal is to detect intrusion patterns from traffic behavior rather than relying on fixed rules or signatures.
+- Models are tuned via stratified k-fold cross-validation on `KDDTrain+.txt`, then evaluated once on the official held-out `KDDTest+.txt` (which includes attack types never seen during training, by NSL-KDD design).
+- Three label granularities are evaluated: `binary` (normal/attack), `category5` (normal/dos/probe/r2l/u2r), and `multiclass` (raw attack type).
+- Two model families are compared: KNN and class-weighted Random Forest, each with a SMOTE variant that oversamples rare classes (capped growth, so classes like U2R aren't inflated to the size of "normal").
 
 ## Dataset
 
@@ -15,16 +16,25 @@ NetGuard is a machine learning model that classifies network traffic as **Normal
 ## Tech Stack
 
 - **Language**: Python
-- **ML**: Scikit-learn (KNN)
+- **ML**: scikit-learn (KNN, Random Forest), imbalanced-learn (SMOTE)
+
+## Results (held-out KDDTest+)
+
+See `results/tables/summary_all_granularities_testset.csv` for the full table (accuracy, weighted/macro precision-recall-F1, best CV params) across all granularity/model combinations, and `results/tables/*_per_class_report_testset.csv` for per-class breakdowns. `results/plots/` has confusion matrices per combination.
 
 ## Status
 
 This model is also reused in a second project, [TraceBack](https://github.com/yughpatel/TraceBack), applying the same KNN approach to server log analysis instead of network traffic.
 
 Currently being refined based on faculty feedback:
-- [ ] Add confusion matrix and full evaluation metrics (accuracy, precision, recall, F1-score)
+- [x] Add confusion matrix and full evaluation metrics (accuracy, precision, recall, F1-score)
+- [x] Improve feature scaling before distance-based classification
+- [x] Address class imbalance (class-weighted Random Forest, SMOTE oversampling)
 - [ ] Retrain on a larger / more modern dataset (e.g. CIC-IDS2017/2018)
-- [ ] Improve feature scaling before distance-based classification
+- [ ] Try a gradient-boosted tree model as a third model family
+- [ ] Package a saved model + inference script for scoring new records
+
+`notebooks/analysis.ipynb` is an earlier, simpler exploratory pass (single KNN model, single train/test split) kept for reference; `src/` is the actively maintained pipeline described above.
 
 ## Setup
 
@@ -32,4 +42,5 @@ Currently being refined based on faculty feedback:
 git clone https://github.com/yughpatel/ML-Based-Network-Intrusion-Detection-System.git
 cd ML-Based-Network-Intrusion-Detection-System
 pip install -r requirements.txt
+python run_evaluation.py
 ```
