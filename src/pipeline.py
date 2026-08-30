@@ -3,7 +3,7 @@ import time
 import numpy as np
 import pandas as pd
 from imblearn.over_sampling import SMOTE
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import HistGradientBoostingClassifier, RandomForestClassifier
 from sklearn.model_selection import StratifiedKFold
 from sklearn.neighbors import KNeighborsClassifier
 
@@ -77,11 +77,32 @@ _RANDOM_FOREST = {
         {"n_estimators": 500, "max_depth": None},
     ],
 }
+_GRADIENT_BOOSTING = {
+    # early_stopping="auto" (the default) carves out its own stratified
+    # validation split internally, which blows up on classes with a
+    # handful of rows total (e.g. multiclass's "spy" has 2) -- external CV
+    # already guards against overfitting here, so early stopping is disabled.
+    "factory": lambda max_iter, max_depth: HistGradientBoostingClassifier(
+        max_iter=max_iter,
+        max_depth=max_depth,
+        class_weight="balanced",
+        early_stopping=False,
+        random_state=RANDOM_STATE,
+    ),
+    "param_grid": [
+        {"max_iter": 100, "max_depth": None},
+        {"max_iter": 100, "max_depth": 10},
+        {"max_iter": 200, "max_depth": None},
+        {"max_iter": 300, "max_depth": None},
+    ],
+}
 MODEL_REGISTRY = {
     "knn": {**_KNN, "smote": False},
     "knn_smote": {**_KNN, "smote": True},
     "random_forest": {**_RANDOM_FOREST, "smote": False},
     "random_forest_smote": {**_RANDOM_FOREST, "smote": True},
+    "gradient_boosting": {**_GRADIENT_BOOSTING, "smote": False},
+    "gradient_boosting_smote": {**_GRADIENT_BOOSTING, "smote": True},
 }
 
 
@@ -182,7 +203,8 @@ def run_granularity(name: str, model_key: str, train_df: pd.DataFrame, test_df: 
     }
 
 
-def run_all(log=print, model_keys=("knn", "random_forest", "knn_smote", "random_forest_smote")) -> dict:
+def run_all(log=print, model_keys=("knn", "random_forest", "gradient_boosting",
+                                    "knn_smote", "random_forest_smote", "gradient_boosting_smote")) -> dict:
     log("Loading data...")
     train_df = load_train()
     test_df = load_test()
