@@ -20,7 +20,7 @@ NetGuard is a machine learning pipeline that classifies network traffic on the N
 
 ## Results (held-out KDDTest+)
 
-See `results/tables/summary_all_granularities_testset.csv` for the full table (accuracy, weighted/macro precision-recall-F1, best CV params) across all granularity/model combinations, and `results/tables/*_per_class_report_testset.csv` for per-class breakdowns. `results/plots/` has confusion matrices per combination.
+See [`RESULTS.md`](RESULTS.md) for a summary of findings across models and granularities. Full numbers are in `results/tables/summary_all_granularities_testset.csv` (accuracy, weighted/macro precision-recall-F1, best CV params) and `results/tables/*_per_class_report_testset.csv` (per-class breakdowns). `results/plots/` has confusion matrices per combination.
 
 ## Status
 
@@ -30,8 +30,8 @@ Currently being refined based on faculty feedback:
 - [x] Add confusion matrix and full evaluation metrics (accuracy, precision, recall, F1-score)
 - [x] Improve feature scaling before distance-based classification
 - [x] Address class imbalance (class-weighted Random Forest, SMOTE oversampling)
+- [x] Try a gradient-boosted tree model as a third model family
 - [ ] Retrain on a larger / more modern dataset (e.g. CIC-IDS2017/2018)
-- [ ] Try a gradient-boosted tree model as a third model family
 - [ ] Package a saved model + inference script for scoring new records
 
 `notebooks/analysis.ipynb` is an earlier, simpler exploratory pass (single KNN model, single train/test split) kept for reference; `src/` is the actively maintained pipeline described above.
